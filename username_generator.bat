@@ -6,6 +6,7 @@ cd %~dp0"
 ::
 set LogUsernameRawToFile=true
 set AmountOfNamesToWrite=10
+set Showhash=false
 ::
 ::Will log the raw username with the md5 hash to the database file
 ::How many names to write to the screen
@@ -40,7 +41,7 @@ for /F "delims=" %%a in ('findstr /I /N "%md5%" %database%') do set "datalookup=
 if "%datalookup%"=="" (goto next) else goto start
 :next
 echo %username%
-::echo %md5%
+if %showhash%==true echo %md5%
 if %LogUsernameRawToFile%==true (echo %md5% ^| %username% >>database.txt) else (echo %md5% ^| >>database.txt)
 
 if %num%==%AmountOfNamesToWrite% (goto end) else (goto start)
