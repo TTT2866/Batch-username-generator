@@ -10,6 +10,7 @@ set Showhash=false
 ::
 ::Will log the raw username with the md5 hash to the database file
 ::How many names to write to the screen
+::Display the md5 hash underneath the generated username
 ::==============================================
 
 if not exist database.txt echo Creating database... & call :databasecreate
