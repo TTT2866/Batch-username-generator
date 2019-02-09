@@ -3,8 +3,12 @@ color f
 cd %~dp0"
 ::==============================================
 ::Optional variables..
+::
 set LogUsernameRawToFile=true
+set AmountOfNamesToWrite=10
+::
 ::Will log the raw username with the md5 hash to the database file
+::How many names to write to the screen
 ::==============================================
 
 if not exist database.txt echo Creating database... & call :databasecreate
@@ -13,12 +17,10 @@ if not exist wordlist.txt echo Downloading wordlist... & call :downloadbyhackoo 
 cls
 if not exist md5.bat echo Downloading md5.bat... & call :downloadbyhackoo https://raw.githubusercontent.com/TTT2866/Batch-username-generator/master/md5.bat md5.bat
 cls
-
+set num=0
 :start
-cls
-echo.
-echo Generating your username..
-echo.
+set /a num=%num%+1
+
 call :func
 set word1=%random_word%
 call :cap
@@ -38,9 +40,12 @@ for /F "delims=" %%a in ('findstr /I /N "%md5%" %database%') do set "datalookup=
 if "%datalookup%"=="" (goto next) else goto start
 :next
 echo %username%
-echo %md5%
+::echo %md5%
 if %LogUsernameRawToFile%==true (echo %md5% ^| %username% >>database.txt) else (echo %md5% ^| >>database.txt)
 
+if %num%==%AmountOfNamesToWrite% (goto end) else (goto start)
+
+:end
 echo.
 echo Done.
 echo Press any key to exit
