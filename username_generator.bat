@@ -7,13 +7,25 @@ cd %~dp0"
 set LogUsernameRawToFile=true
 set AmountOfNamesToWrite=10
 set Showhash=false
+set AutoUpdate=true
 ::
-::Will log the raw username with the md5 hash to the database file
+::Will log the raw username with the md5 hash to the database/log file
 ::How many names to write to the screen
-::Display the md5 hash underneath the generated username
+::Display the hash underneath the username
+::Auto update the wordlist and MD5 script every 10th run
+::==============================================
+::Update variables
+::
+set UpdateLoop=10
+set UpdateMd5=false
+set UpdateWordlist=true
+::
+::How many runs we will go through before updating
+::Update the md5 file?
+::Update the wordlist? (recommended)
 ::==============================================
 
-if not exist database.txt echo Creating database... & call :databasecreate
+if not exist logs.txt echo Creating logfile... & call :databasecreate
 cls
 if not exist wordlist.txt echo Downloading wordlist... & call :downloadbyhackoo https://raw.githubusercontent.com/TTT2866/Batch-username-generator/master/wordlist.txt wordlist.txt
 cls
@@ -21,6 +33,7 @@ if not exist md5.bat echo Downloading md5.bat... & call :downloadbyhackoo https:
 cls
 set num=0
 :start
+
 set /a num=%num%+1
 
 call :func
@@ -37,13 +50,13 @@ echo %username% >temp.txt
 
 call :md5func
 
-set database=database.txt
+set database=logs.txt
 for /F "delims=" %%a in ('findstr /I /N "%md5%" %database%') do set "datalookup=%%a"
 if "%datalookup%"=="" (goto next) else goto start
 :next
 echo %username%
 if %showhash%==true echo %md5%
-if %LogUsernameRawToFile%==true (echo %md5% ^| %username% >>database.txt) else (echo %md5% ^| >>database.txt)
+if %LogUsernameRawToFile%==true (echo %md5% ^| %username% >>logs.txt) else (echo %md5% ^| >>logs.txt)
 
 if %num%==%AmountOfNamesToWrite% (goto end) else (goto start)
 
@@ -52,6 +65,13 @@ echo.
 echo Done.
 echo Press any key to exit
 pause >nul
+
+
+if not exist %temp%\update.txt echo 1 >%temp%\update.txt
+set /p linenumber=<%temp%\update.txt
+set /a newnum=%linenumber%+1
+echo %newnum% >%temp%\update.txt
+if %linenumber%==%UpdateLoop% call :update
 exit
 
 :func
@@ -116,9 +136,9 @@ set word1x=%firstcap%%word1temp%
 goto :EOF
 
 :databasecreate
-echo ================================================================ >database.txt
-echo ^|      MD5 hash of username      ^|           Username          ^| >>database.txt
-echo ================================================================ >>database.txt
+echo ================================================================ >logs.txt
+echo ^|      MD5 hash of username      ^|           Username          ^| >>logs.txt
+echo ================================================================ >>logs.txt
 
 goto :EOF
 
@@ -144,4 +164,12 @@ Powershell.exe -command "(New-Object System.Net.WebClient).DownloadFile('%1','%2
 ::*********************************************************************************
 goto :EOF
 
-
+:update
+if %AutoUpdate%==true (
+echo ================================================================  >>logs.txt
+del %temp%\update.txt
+if %UpdateWordList%==true del wordlist.txt & echo Updated wordlist.txt >>logs.txt
+if %UpdateMD5%==true del md5.bat & echo Updated md5.bat >>logs.txt
+echo ================================================================ >>logs.txt
+)
+goto :EOF
