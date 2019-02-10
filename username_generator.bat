@@ -25,7 +25,7 @@ set UpdateWordlist=true
 ::Update the wordlist? (recommended)
 ::==============================================
 
-if not exist logs.txt echo Creating logfile... & call :databasecreate
+if not exist Usernames.txt echo Creating logfile... & call :databasecreate
 cls
 if not exist wordlist.txt echo Downloading wordlist... & call :downloadbyhackoo https://raw.githubusercontent.com/TTT2866/Batch-username-generator/master/wordlist.txt wordlist.txt
 cls
@@ -50,13 +50,13 @@ echo %username% >temp.txt
 
 call :md5func
 
-set database=logs.txt
+set database=Usernames.txt
 for /F "delims=" %%a in ('findstr /I /N "%md5%" %database%') do set "datalookup=%%a"
 if "%datalookup%"=="" (goto next) else goto start
 :next
 echo %username%
 if %showhash%==true echo %md5%
-if %LogUsernameRawToFile%==true (echo %md5% ^| %username% >>logs.txt) else (echo %md5% ^| >>logs.txt)
+if %LogUsernameRawToFile%==true (echo %md5% ^| %username% >>Usernames.txt) else (echo %md5% ^| >>Usernames.txt)
 
 if %num%==%AmountOfNamesToWrite% (goto end) else (goto start)
 
@@ -136,9 +136,9 @@ set word1x=%firstcap%%word1temp%
 goto :EOF
 
 :databasecreate
-echo ================================================================ >logs.txt
-echo ^|      MD5 hash of username      ^|           Username          ^| >>logs.txt
-echo ================================================================ >>logs.txt
+echo ================================================================ >Usernames.txt
+echo ^|      MD5 hash of username      ^|           Username          ^| >>Usernames.txt
+echo ================================================================ >>Usernames.txt
 
 goto :EOF
 
@@ -166,10 +166,10 @@ goto :EOF
 
 :update
 if %AutoUpdate%==true (
-echo ================================================================  >>logs.txt
+echo ================================================================  >>Usernames.txt
 del %temp%\update.txt
-if %UpdateWordList%==true del wordlist.txt & echo Updated wordlist.txt >>logs.txt
-if %UpdateMD5%==true del md5.bat & echo Updated md5.bat >>logs.txt
-echo ================================================================ >>logs.txt
+if %UpdateWordList%==true del wordlist.txt & echo Updated wordlist.txt >>Usernames.txt
+if %UpdateMD5%==true del md5.bat & echo Updated md5.bat >>Usernames.txt
+echo ================================================================ >>Usernames.txt
 )
 goto :EOF
