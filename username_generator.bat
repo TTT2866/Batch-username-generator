@@ -35,6 +35,8 @@ cls
 if not exist md5.bat echo Downloading md5.bat... & call :downloadbyhackoo https://raw.githubusercontent.com/TTT2866/Batch-username-generator/master/md5.bat md5.bat
 cls
 if exist temp.txt del temp.txt
+cls
+if exist Download_update.bat del Download_update.bat
 set num=0
 
 set /p us=<wordlist.txt
