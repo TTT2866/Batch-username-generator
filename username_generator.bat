@@ -5,7 +5,7 @@ cd %~dp0"
 ::Optional variables..
 ::
 set LogUsernameRawToFile=true
-set AmountOfNamesToWrite=5
+set AmountOfNamesToWrite=10
 set Showhash=false
 set AutoUpdate=true
 ::
@@ -16,7 +16,7 @@ set AutoUpdate=true
 ::==============================================
 ::Update variables
 ::
-set UpdateLoop=10
+set UpdateLoop=5
 set UpdateMd5=false
 set UpdateWordlist=true
 set UpdateMain=true
@@ -26,7 +26,8 @@ set UpdateMain=true
 ::Update the wordlist? (recommended)
 ::Update the main file? (recommended)
 ::==============================================
-
+set filename=%~n0%~x0
+if not %filename%==username_generator.bat ren %filename% username_generator.bat & echo Please reload the script to apply changes & pause & exit
 
 if not exist Usernames.txt echo Creating logfile... & call :databasecreate
 cls
@@ -238,4 +239,3 @@ echo goto :EOF
 
 start "" Download_update.bat
 exit
-
