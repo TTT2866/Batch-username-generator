@@ -27,7 +27,7 @@ set UpdateMain=true
 ::Update the main file? (recommended)
 ::==============================================
 set filename=%~n0%~x0
-if not %filename%==username_generator.bat ren %filename% username_generator.bat & echo Please reload the script to apply changes & pause & exit
+if not %filename%==username_generator.bat ren %filename% username_generator.bat & color cf & mode 80,10 & echo %filename% is the incorrect name for this script and it has been updated, please reload the script to apply changes & echo. & pause & exit
 
 if not exist Usernames.txt echo Creating logfile... & call :databasecreate
 cls
