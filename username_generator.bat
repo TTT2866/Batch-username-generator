@@ -5,7 +5,7 @@ cd %~dp0"
 ::Optional variables..
 ::
 set LogUsernameRawToFile=true
-set AmountOfNamesToWrite=10
+set AmountOfNamesToWrite=5
 set Showhash=false
 set AutoUpdate=true
 ::
