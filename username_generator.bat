@@ -43,7 +43,7 @@ set /p us=<wordlist.txt
 set updatesignal=%us%
 ::this wont work unless you pass the variable for some reason
 if %updatesignal%==Update_Ready call :updatemain
-exit
+
 
 :start
 set /a num=%num%+1
@@ -209,7 +209,9 @@ echo del username_generator.bat
 echo type wordlist.txt ^| findstr /v Update_Ready ^>wordlist2.txt 
 echo del wordlist.txt
 echo rename wordlist2.txt wordlist.txt
-
+echo ================================================================ >>Usernames.txt
+echo Updated username_generator.bat >>Usernames.txt
+echo ================================================================ >>Usernames.txt
 echo call :downloadbyhackoo https://raw.githubusercontent.com/TTT2866/Batch-username-generator/master/username_generator.bat username_generator.bat
 echo exit
 echo :downloadbyhackoo
@@ -235,5 +237,5 @@ echo goto :EOF
 )>Download_update.bat
 
 start "" Download_update.bat
-goto :EOF
+exit
 
