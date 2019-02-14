@@ -19,11 +19,14 @@ set AutoUpdate=true
 set UpdateLoop=10
 set UpdateMd5=false
 set UpdateWordlist=true
+set UpdateMain=true
 ::
 ::How many runs we will go through before updating
 ::Update the md5 file?
 ::Update the wordlist? (recommended)
+::Update the main file? (recommended)
 ::==============================================
+
 
 if not exist Usernames.txt echo Creating logfile... & call :databasecreate
 cls
@@ -31,9 +34,16 @@ if not exist wordlist.txt echo Downloading wordlist... & call :downloadbyhackoo 
 cls
 if not exist md5.bat echo Downloading md5.bat... & call :downloadbyhackoo https://raw.githubusercontent.com/TTT2866/Batch-username-generator/master/md5.bat md5.bat
 cls
+if exist temp.txt del temp.txt
 set num=0
-:start
 
+set /p us=<wordlist.txt
+set updatesignal=%us%
+::this wont work unless you pass the variable for some reason
+if %updatesignal%==Update_Ready call :updatemain
+exit
+
+:start
 set /a num=%num%+1
 
 call :func
@@ -165,6 +175,7 @@ Powershell.exe -command "(New-Object System.Net.WebClient).DownloadFile('%1','%2
 goto :EOF
 
 :update
+pause
 if %AutoUpdate%==true (
 echo ================================================================  >>Usernames.txt
 del %temp%\update.txt
@@ -173,3 +184,54 @@ if %UpdateMD5%==true del md5.bat & echo Updated md5.bat >>Usernames.txt
 echo ================================================================ >>Usernames.txt
 )
 goto :EOF
+
+:updatemain
+if %Autoupdate%==false goto start
+::check for update signal in the wordlist  /
+::if signal exists then make new file with the download script link /
+::new file has download link, delete this file, and echo the wordlist WITHOUT update signal
+
+::set /p updatesignal=<worlist.txt
+::if not %updatesignal%==Update_Pending 
+
+
+if exist %temp%\update_downloaded.log goto start
+echo. >%temp%\update_downloaded.log
+::for now this will only download the updated script once unless you clear the temp file
+
+
+(
+echo @echo off
+echo cd %%~dp0"
+echo del username_generator.bat
+echo type wordlist.txt ^| findstr /v Update_Ready ^>wordlist2.txt 
+echo del wordlist.txt
+echo rename wordlist2.txt wordlist.txt
+
+echo call :downloadbyhackoo https://raw.githubusercontent.com/TTT2866/Batch-username-generator/master/username_generator.bat username_generator.bat
+echo exit
+echo :downloadbyhackoo
+echo Ping google.com -n 1 -w 1000
+echo cls
+echo if %%errorlevel%%==1 ^(set internet=nconnected^) else ^(set internet=connected^)
+echo if %%internet%%==%%nconnected%% ^(echo Error.. you must be connected to internet to download the files required for this script to run. ^& pause ^>nul ^& exit^)
+
+echo Set "url=%%~1%%"
+echo for %%%%# in ^(%%url%%^) do ^( set "File=%%tmp%%\%%%%~n#.txt" ^)
+echo Call :Download "%%url%%" "%%File%%"
+echo If exist "%%File%%" ^( 
+echo     ^( Type "%%File%%"^)^>con
+echo ^( Type "%%File%%" ^> %%~2%%^)
+echo ^)
+
+echo ::*********************************************************************************
+echo :Download ^<url^> ^<File^>
+echo Powershell.exe -command "(New-Object System.Net.WebClient).DownloadFile('%%1','%%2')"
+echo ::*********************************************************************************
+echo goto :EOF
+
+)>Download_update.bat
+
+start "" Download_update.bat
+goto :EOF
+
